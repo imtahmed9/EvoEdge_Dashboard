@@ -1,0 +1,63 @@
+.dashboardGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem;
+  width: 100%;
+}
+
+.machineDashboardCard {
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 1rem;
+  width: 31%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.machineListLabel {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.cardGauge {
+  display: block;
+  margin: 0 auto 1rem;
+}
+
+.idProgressIndicator {
+  min-width: 18rem;
+  height: 1rem;
+}
+
+.bigTitle {
+  font-size: 2rem !important; /* You can increase this to 2rem, 2.5rem, etc. */
+  font-weight: bold;
+}
+
+.customStripHighlight {
+  font-size: 1rem !important;     /* Increase font size */
+  font-weight: bold;     /* Make text bold */
+  animation: flash 1s linear infinite;  /* Flashing effect */
+}
+
+/* Flashing keyframes */
+@keyframes flash {
+  0%, 100% { background-color: #fefefe; }
+  50% { background-color: #cd4851; } /* yellow-ish flash */
+}
+
+.mediumTitle {
+  font-size: 1rem !important; /* You can increase this to 2rem, 2.5rem, etc. */
+  font-weight: bold;
+}
+
+.centerText {
+  text-align: center !important;
+  font-size: 1.5rem !important;
+  width: 100%;
+  display: block;
+}

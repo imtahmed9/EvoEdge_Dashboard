@@ -1,0 +1,224 @@
+<mvc:View controllerName="com.evoedge.machinerealtimemonitoringdashboard.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:ui="sap.ui.table"
+    xmlns:viz="sap.viz.ui5.controls"
+    xmlns:viz.data="sap.viz.ui5.data"
+    xmlns:viz.feeds="sap.viz.ui5.controls.common.feeds"
+    xmlns:f="sap.f"
+    xmlns:layout="sap.ui.layout"
+    xmlns:fb="sap.ui.comp.filterbar"
+    xmlns:svm="sap.ui.comp.smartvariants"
+    xmlns:core="sap.ui.core"
+    xmlns:suite="sap.suite.ui.commons"
+    height="100%">
+     <f:DynamicPage id="idDynamicMTRTM">
+        <f:title>
+            <f:DynamicPageTitle>
+                <f:heading>
+                    <Title text="Machine Type Real Time Monitoring" class="bigTitle" />
+                </f:heading>
+                <f:expandedContent>
+                    <Label text="Machine Type Real Time Monitoring"/>
+                </f:expandedContent>
+                <f:snappedContent>
+                    <Label text="Machine Type Real Time Monitoring"/>
+                </f:snappedContent>
+                <f:snappedTitleOnMobile>
+                    <Title text="Machine Type Real Time Monitoring"/>
+                </f:snappedTitleOnMobile>
+            </f:DynamicPageTitle>
+        </f:title>
+
+        <f:header>
+            <f:DynamicPageHeader pinnable="true">
+                <f:content>
+                    <fb:FilterBar id="idFilterBarMTRTM"
+                        persistencyKey="myPersKey"
+                        useToolbar="false"
+                        search=".onSearch"
+                        filterChange=".onFilterChange"
+                        afterVariantLoad=".onAfterVariantLoad">
+                        <fb:filterGroupItems>
+                            <fb:FilterGroupItem name="MachineType" label="Machine Type" groupName="Group1" visibleInFilterBar="true">
+                                <fb:control>
+                                    <ComboBox
+                                        id="comboMachineType"
+                                        items="{
+                                            path: '/UniqueMachineTypes',
+                                            sorter: { path: 'Machine_Type' }
+                                        }"
+                                        selectedKey="{viewModel>/selectedMachineType}"
+                                        change="onMachineTypeChange">
+                                        <core:Item key="{Machine_Type}" text="{Machine_Type}" />
+                                    </ComboBox>
+                                </fb:control>
+                            </fb:FilterGroupItem>
+                        </fb:filterGroupItems>
+                    </fb:FilterBar>
+                </f:content>
+            </f:DynamicPageHeader>
+        </f:header>
+
+        <f:content>
+            <!-- <VBox items="{
+    path: 'groupModel>/Groups',
+    templateShareable: true
+}">
+  <VBox class="machineCardWrapper" items="{
+      path: 'groupModel>Machines',
+      templateShareable: true
+  }">
+    <core:HTML content="{
+        path: 'groupModel>ChartId',
+        formatter: '.renderGaugeCanvas'
+    }"/>
+    <Text text="{groupModel>Machine_Id}" />
+  </VBox>
+</VBox> -->
+            <!-- <FlexBox
+    id="progressListContainer"
+    direction="Row"
+    justifyContent="SpaceBetween"
+    wrap="Wrap"
+    class="sapUiSmallMargin dashboardGrid"
+    renderType="Div"
+    items="{
+        path: 'groupModel>/Groups',
+        templateShareable: true
+    }">
+
+    <VBox width="300px" class="machineDashboardCard">
+        <Text text="{groupModel>Machine_Type} Machines" class="machineListLabel" />
+
+        <core:HTML content='&lt;canvas id="{groupModel>GaugeId}" width="150" height="100"&gt;&lt;/canvas&gt;' />
+
+        <VBox items="{
+            path: 'groupModel>Machines',
+            templateShareable: true
+        }">
+            <HBox alignItems="Start" class="sapUiTinyMarginBottom">
+                <Text text="{groupModel>Machine_Id}" width="60px" />
+                <HBox>
+                    <ProgressIndicator
+                    percentValue="{groupModel>OEE}"
+                    displayValue="{= ${groupModel>OEE} + ' Pr'}"
+                    state="{groupModel>State}"
+                   />
+                </HBox>
+                
+            </HBox>
+        </VBox>
+    </VBox>
+</FlexBox> -->
+
+    
+
+
+            <FlexBox
+    direction="Row"
+    justifyContent="SpaceBetween"
+    wrap="Wrap"
+    alignItems="Start"
+    renderType="Div"
+    class="dashboardGrid"
+    items="{
+        path: 'groupModel>/Groups',
+        templateShareable: true
+    }">
+    
+    
+    <VBox class="machineDashboardCard sapUiTinyMarginEnd">
+        <layoutData>
+            <FlexItemData growFactor="0" />
+        </layoutData>
+
+        <!-- <MessageStrip
+            text="{= 'Attention required: ' + ${groupModel>Machine_Id_Error_Id} }"
+            visible="{= !!${groupModel>Machine_Id_Error_Id} }"
+            type="Error"
+            showIcon="true"
+            class="sapUiMediumMarginBottom customStripHighlight" /> -->
+
+        <VBox height="5rem" class="messageStripWrapper sapUiSmallMarginBottom">
+            <MessageStrip
+                text="{= 'Attention required: ' + ${groupModel>Machine_Id_Error_Id} }"
+                visible="{= !!${groupModel>Machine_Id_Error_Id} }"
+                type="Error"
+                showIcon="true"
+                class="customStripHighlight" />
+            </VBox>
+
+
+        <Text text="{groupModel>Machine_Type_Name} Machines" class="machineListLabel centerText" />
+
+        <VBox class="sapUiSmallMargin">
+    
+        <!-- <ObjectStatus 
+            text="Pressure &lt; 200" 
+            state="Success"
+            icon="sap-icon://sys-enter-2" 
+            class="sapUiTinyMarginBottom mediumTitle"/>
+            
+        <ObjectStatus 
+            text="Pressure 201–239" 
+            state="Warning"
+            icon="sap-icon://alert"
+            class="sapUiTinyMarginBottom mediumTitle" />
+            
+        <ObjectStatus 
+            text="Pressure ≥ 240" 
+            state="Error"
+            icon="sap-icon://error"
+            class="sapUiTinyMarginBottom mediumTitle" /> -->
+
+            <ObjectStatus 
+                text="{= ${groupModel>Machine_Type}.startsWith('BR') ? 'Temperature ≤ 800' : 
+                            ${groupModel>Machine_Type}.startsWith('CM') ? 'Temperature ≤ 1000' : 
+                            'Pressure = 8'}" 
+                state="Success" 
+                icon="sap-icon://sys-enter-2" 
+                class="sapUiTinyMarginBottom mediumTitle"/>
+            <ObjectStatus 
+                text="{= ${groupModel>Machine_Type}.startsWith('BR') ? 'Temperature 801–850' : 
+                            ${groupModel>Machine_Type}.startsWith('CM') ? 'Temperature 1001–1050' : 
+                            'Pressure = 7'}" 
+                state="Warning" 
+                icon="sap-icon://alert"
+                class="sapUiTinyMarginBottom mediumTitle"/>
+
+                <ObjectStatus 
+                text="{= ${groupModel>Machine_Type}.startsWith('BR') ? 'Temperature &gt; 850' : 
+                            ${groupModel>Machine_Type}.startsWith('CM') ? 'Temperature &gt; 1050' : 
+                            'Pressure &lt; 6 or &gt; 8'}" 
+                state="Error" 
+                icon="sap-icon://error"
+                class="sapUiTinyMarginBottom mediumTitle"/>
+    </VBox>
+
+        <core:HTML content='&lt;canvas id="{groupModel>GaugeId}" width="150" height="100"&gt;&lt;/canvas&gt;' class="cardGauge" />
+
+        <VBox items="{
+            path: 'groupModel>Machines',
+            templateShareable: true
+        }">
+            <HBox alignItems="Center" justifyContent="Start" class="machineListItem">
+                <Text text="{groupModel>Machine_Id}" width="60px" class="sapUiSmallMarginEnd" />
+                <ProgressIndicator
+                    percentValue="{groupModel>Value}"
+                    displayValue="{= ${groupModel>Value} + ' ' + ${groupModel>measurement} }"
+                    state="{groupModel>State}"
+                    class="idProgressIndicator" />
+            </HBox>
+        </VBox>
+    </VBox>
+</FlexBox>
+
+
+            			
+
+
+        </f:content>
+
+    </f:DynamicPage>
+</mvc:View>

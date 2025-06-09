@@ -1,0 +1,15 @@
+{
+  "name": "srv",
+  "version": "1.0.0",
+  "dependencies": {
+    "@sap/cds": "^8.9.4",
+    "express": "^4",
+    "@sap/xssec": "^3"
+  },
+  "engines": {
+    "node": "18.x"
+  },
+  "scripts": {
+    "start": "cds-serve"
+  }
+}
