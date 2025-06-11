@@ -37,7 +37,7 @@ modules:
         - command: npm start
           name: deploy-to-postgresql
 
-  - name: comevoedgemachinerealtimemonitoringdashboard
+  - name: comevoedgemachinerealtimemonitoringdashboard-v2
     type: html5
     path: app/machine_real_time_monitoring_dashboard
     build-parameters:
@@ -60,7 +60,7 @@ modules:
       requires:
         - artifacts:
             - dist/machine_real_time_monitoring_dashboard.zip
-          name: comevoedgemachinerealtimemonitoringdashboard
+          name: comevoedgemachinerealtimemonitoringdashboard-v2
           target-path: resources/
 
   - name: EvoEdge_Dashboard
