@@ -43,7 +43,12 @@
       },
       "destinations": true,
       "html5-runtime": true,
-      "workzone": true
+      "workzone": true,
+      "kinds": {
+      "postgres": {
+        "impl": "@cap-js/postgres"
+      }
+    }
     },
     "profile": "with-mtx-sidecar"
   }
