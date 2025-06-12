@@ -1,0 +1,227 @@
+_schema-version: 3.3.0
+ID: EvoEdge_Dashboard
+description: A simple CAP project.
+version: 1.0.1
+modules:
+- name: EvoEdge_Dashboard-srv
+  type: javascript.nodejs
+  path: EvoEdge_Dashboard-srv
+  requires:
+  - name: postgresdb
+  - name: EvoEdge_Dashboard-destination-service
+  - name: xsuaa-service
+  provides:
+  - name: srv-api
+    properties:
+      srv-url: ${default-url}
+  parameters:
+    buildpack: nodejs_buildpack
+    disk-quota: 1024M
+    memory: 1024M
+- name: postgresdb-deployer
+  type: javascript.nodejs
+  path: postgresdb-deployer
+  requires:
+  - name: postgresdb
+  parameters:
+    buildpack: nodejs_buildpack
+    no-route: true
+    no-start: true
+    tasks:
+    - command: npm start
+      name: deploy-to-postgresql
+- name: EvoEdge_Dashboard-app-content
+  type: com.sap.application.content
+  path: EvoEdge_Dashboard-app-content
+  requires:
+  - name: EvoEdge_Dashboard-html5-repo-host
+    parameters:
+      content-target: true
+- name: EvoEdge_Dashboard
+  type: javascript.nodejs
+  path: EvoEdge_Dashboard
+  properties:
+    TENANT_HOST_PATTERN: ^(.*)-${default-uri}
+  requires:
+  - name: srv-api
+    group: destinations
+    properties:
+      forwardAuthToken: true
+      name: srv-api
+      url: ~{srv-url}
+  - name: xsuaa-service
+  - name: EvoEdge_Dashboard-destination-service
+  - name: EvoEdge_Dashboard-html5-runtime
+  - name: mtx-api
+    group: destinations
+    properties:
+      name: mtx-api
+      url: ~{mtx-url}
+  provides:
+  - name: app-api
+    properties:
+      app-protocol: ${protocol}
+      app-uri: ${default-uri}
+  parameters:
+    disk-quota: 256M
+    keep-existing-routes: true
+    memory: 256M
+- name: EvoEdge_Dashboard-destinations
+  type: com.sap.application.content
+  requires:
+  - name: EvoEdge_Dashboard-auth
+    parameters:
+      service-key:
+        name: EvoEdge_Dashboard-auth-key
+  - name: EvoEdge_Dashboard-html5-repo-host
+    parameters:
+      service-key:
+        name: EvoEdge_Dashboard-html5-repo-host-key
+  - name: srv-api
+  - name: EvoEdge_Dashboard-destination
+    parameters:
+      content-target: true
+  parameters:
+    content:
+      instance:
+        destinations:
+        - Name: EvoEdge_Dashboard-html5-repository
+          ServiceInstanceName: EvoEdge_Dashboard-html5-repo-host
+          ServiceKeyName: EvoEdge_Dashboard-html5-repo-host-key
+          sap.cloud.service: EvoEdge_Dashboard.service
+        - Authentication: OAuth2UserTokenExchange
+          Name: EvoEdge_Dashboard-auth
+          ServiceInstanceName: EvoEdge_Dashboard-auth
+          ServiceKeyName: EvoEdge_Dashboard-auth-key
+          sap.cloud.service: EvoEdge_Dashboard.service
+        existing_destinations_policy: update
+- name: EvoEdge_Dashboard-mtx
+  type: javascript.nodejs
+  path: EvoEdge_Dashboard-mtx
+  requires:
+  - name: EvoEdge_Dashboard-registry
+  - name: app-api
+    properties:
+      SUBSCRIPTION_URL: ~{app-protocol}://\${tenant_subdomain}-~{app-uri}
+  - name: EvoEdge_Dashboard-destination-service
+  - name: EvoEdge_Dashboard-html5-runtime
+  - name: EvoEdge_Dashboard-repo-host
+  - name: xsuaa-service
+  provides:
+  - name: mtx-api
+    properties:
+      mtx-url: ${default-url}
+  parameters:
+    disk-quota: 512M
+    instances: 1
+    memory: 256M
+resources:
+- name: xsuaa-service
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      oauth2-configuration:
+        redirect-uris:
+        - https://~{app-api/app-uri}/**
+      tenant-mode: shared
+      xsappname: EvoEdge_Dashboard_EvoedgeSolutionsLimited_Dev
+    path: ./xs-security.json
+    service: xsuaa
+    service-plan: application
+  requires:
+  - name: app-api
+- name: postgresdb
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: postgresql-db
+    service-name: postgresdb
+    service-plan: standard
+- name: EvoEdge_Dashboard-repo-host
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-name: EvoEdge_Dashboard-html5-service
+    service-plan: app-host
+- name: EvoEdge_Dashboard-html5-repo-host
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-plan: app-host
+- name: EvoEdge_Dashboard-html5-runtime
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-plan: app-runtime
+- name: EvoEdge_Dashboard-destination-service
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      HTML5Runtime_enabled: true
+      init_data:
+        instance:
+          destinations:
+          - Authentication: NoAuthentication
+            Name: ui5
+            ProxyType: Internet
+            Type: HTTP
+            URL: https://ui5.sap.com
+          existing_destinations_policy: update
+        subaccount:
+          destinations:
+          - Authentication: NoAuthentication
+            CEP.HTML5contentprovider: true
+            Name: EvoEdge_Dashboard-workzone-runtime
+            ProxyType: Internet
+            Type: HTTP
+            URL: https://${org}.launchpad.${default-domain}
+          existing_destinations_policy: update
+      version: 1.0.0
+    service: destination
+    service-name: EvoEdge_Dashboard-destination-service
+    service-plan: lite
+  requires:
+  - name: srv-api
+    group: destinations
+    properties:
+      forwardAuthToken: true
+      name: srv-api
+      url: ~{srv-url}
+- name: EvoEdge_Dashboard-auth
+  type: org.cloudfoundry.managed-service
+  parameters:
+    existing-service-name: EvoEdge_Dashboard-auth
+    service: xsuaa
+    service-plan: application
+- name: EvoEdge_Dashboard-destination
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: destination
+    service-plan: lite
+- name: EvoEdge_Dashboard-registry
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      appName: EvoEdge_Dashboard_EvoedgeSolutionsLimited_Dev
+      appUrls:
+        callbackTimeoutMillis: 300000
+        getDependencies: ~{mtx-api/mtx-url}/-/cds/saas-provisioning/dependencies
+        onSubscription: ~{mtx-api/mtx-url}/-/cds/saas-provisioning/tenant/{tenantId}
+        onSubscriptionAsync: true
+        onUnSubscriptionAsync: true
+        onUpdateDependenciesAsync: true
+      category: Category
+      description: A simple CAP project.
+      displayName: EvoEdge_Dashboard
+      xsappname: EvoEdge_Dashboard_EvoedgeSolutionsLimited_Dev
+    service: saas-registry
+    service-plan: application
+  requires:
+  - name: mtx-api
+parameters:
+  deploy_mode: html5-repo
+  enable-parallel-deployments: true
+build-parameters:
+  before-all:
+  - builder: custom
+    commands:
+    - npx cds build --production

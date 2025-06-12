@@ -1,0 +1,36 @@
+manifest-Version: 1.0
+Created-By: SAP Application Archive Builder 1.2.34
+
+Name: EvoEdge_Dashboard-srv/data.zip
+MTA-Module: EvoEdge_Dashboard-srv
+Content-Type: application/zip
+
+
+Name: postgresdb-deployer/data.zip
+MTA-Module: postgresdb-deployer
+Content-Type: application/zip
+
+
+Name: EvoEdge_Dashboard-app-content/resources/data.zip
+MTA-Module: EvoEdge_Dashboard-app-content
+Content-Type: application/zip
+
+
+Name: EvoEdge_Dashboard/data.zip
+MTA-Module: EvoEdge_Dashboard
+Content-Type: application/zip
+
+
+Name: EvoEdge_Dashboard-mtx/data.zip
+MTA-Module: EvoEdge_Dashboard-mtx
+Content-Type: application/zip
+
+
+Name: xs-security.json
+MTA-Resource: xsuaa-service
+Content-Type: application/json
+
+
+Name: META-INF/mtad.yaml
+Content-Type: text/plain
+
