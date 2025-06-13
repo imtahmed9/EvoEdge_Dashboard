@@ -80,11 +80,6 @@ modules:
       - name: xsuaa-service
       - name: EvoEdge_Dashboard-destination-service
       - name: EvoEdge_Dashboard-html5-runtime
-      - name: mtx-api
-        group: destinations
-        properties:
-          name: mtx-api
-          url: ~{mtx-url}
     provides:
       - name: app-api
         properties:
@@ -124,31 +119,6 @@ modules:
               ServiceInstanceName: EvoEdge_Dashboard-auth
               ServiceKeyName: EvoEdge_Dashboard-auth-key
               sap.cloud.service: EvoEdge_Dashboard.service
-
-  - name: EvoEdge_Dashboard-mtx
-    type: nodejs
-    path: gen/mtx/sidecar
-    build-parameters:
-      builder: custom
-      commands:
-        - npm install --omit=dev
-    parameters:
-      instances: 1
-      memory: 256M
-      disk-quota: 512M
-    provides:
-      - name: mtx-api
-        properties:
-          mtx-url: ${default-url}
-    requires:
-      - name: EvoEdge_Dashboard-registry
-      - name: app-api
-        properties:
-          SUBSCRIPTION_URL: ~{app-protocol}://\${tenant_subdomain}-~{app-uri}
-      - name: EvoEdge_Dashboard-destination-service
-      - name: EvoEdge_Dashboard-html5-runtime
-      - name: EvoEdge_Dashboard-repo-host
-      - name: xsuaa-service
 
 resources:
   - name: xsuaa-service
@@ -239,27 +209,6 @@ resources:
     parameters:
       service: destination
       service-plan: lite
-
-  - name: EvoEdge_Dashboard-registry
-    type: org.cloudfoundry.managed-service
-    requires:
-      - name: mtx-api
-    parameters:
-      service: saas-registry
-      service-plan: application
-      config:
-        xsappname: EvoEdge_Dashboard_EvoedgeSolutionsLimited_Dev
-        appName: EvoEdge_Dashboard_EvoedgeSolutionsLimited_Dev
-        displayName: EvoEdge_Dashboard
-        description: A simple CAP project.
-        category: 'Category'
-        appUrls:
-          getDependencies: ~{mtx-api/mtx-url}/-/cds/saas-provisioning/dependencies
-          onSubscription: ~{mtx-api/mtx-url}/-/cds/saas-provisioning/tenant/{tenantId}
-          onSubscriptionAsync: true
-          onUnSubscriptionAsync: true
-          onUpdateDependenciesAsync: true
-          callbackTimeoutMillis: 300000
 
 parameters:
   deploy_mode: html5-repo

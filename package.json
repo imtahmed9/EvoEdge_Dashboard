@@ -38,18 +38,18 @@
       },
       "auth": "xsuaa",
       "[production]": {
-        "auth": "xsuaa",
-        "multitenancy": true
+        "auth": "xsuaa"
       },
       "destinations": true,
       "html5-runtime": true,
       "workzone": true,
       "kinds": {
-      "postgres": {
-        "impl": "@cap-js/postgres"
+        "postgres": {
+          "impl": "@cap-js/postgres"
+        }
       }
-    }
     },
-    "profile": "with-mtx-sidecar"
+    "profile": "production"
+
   }
 }
