@@ -1,7 +1,7 @@
 {
   "_version": "1.65.0",
   "sap.app": {
-    "id": "com.evoedge.machinerealtimemonitoringdashboard-v1",
+    "id": "com.evoedge.machinerealtimemonitoringdashboard",
     "type": "application",
     "i18n": "i18n/i18n.properties",
     "applicationVersion": {
@@ -28,7 +28,7 @@
     "crossNavigation": {
       "inbounds": {
         "machine_real_time_monitoring_dashboard-display": {
-          "semanticObject": "machine_real_time_monitoring_dashboard",
+          "semanticObject": "machine_rt_mntr",
           "action": "display",
           "signature": {
             "parameters": {},
@@ -85,11 +85,17 @@
       }
     },
     "resources": {
+      "js": [
+        {
+          "uri": "libs/chart.umd.min.js"
+        }
+      ],
       "css": [
         {
           "uri": "css/style.css"
         }
       ]
+      
     },
     "routing": {
       "config": {

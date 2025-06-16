@@ -4,12 +4,21 @@ specVersion: "3.1"
 metadata:
   name: com.evoedge.machinerealtimemonitoringdashboard
 type: application
+
+builder:
+  resources:
+    excludes:
+      - /resources/libs/chart.min.js
+
 server:
   customMiddleware:
     - name: fiori-tools-proxy
       afterMiddleware: compression
       configuration:
-        ignoreCertError: false # If set to true, certificate errors will be ignored. E.g. self-signed certificates will be accepted
+        ignoreCertError: false
+        backend:
+          - path: /odata/v4
+            url: http://localhost:4004
         ui5:
           path:
             - /resources
@@ -21,3 +30,4 @@ server:
         port: 35729
         path: webapp
         delay: 300
+  

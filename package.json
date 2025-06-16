@@ -30,15 +30,21 @@
     "requires": {
       "db": {
         "kind": "postgres",
+        "model": [
+          "db",
+          "srv"
+        ],
         "vcap": {
           "label": "postgresql-db",
           "plan": "standard",
           "name": "postgresdb"
         }
       },
-      "auth": "xsuaa",
+      "auth": {
+        "kind": "mocked"
+      },
       "[production]": {
-        "auth": "xsuaa"
+        "auth": "mocked"
       },
       "destinations": true,
       "html5-runtime": true,
@@ -49,7 +55,9 @@
         }
       }
     },
-    "profile": "production"
-
+    "deploy": {
+      "autoUndeploy": false,
+      "with-migrations": true
+    }
   }
 }

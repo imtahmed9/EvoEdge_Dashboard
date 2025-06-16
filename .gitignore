@@ -30,3 +30,5 @@ target/
 
 # @cap-js/cds-typer
 @cds-models
+
+.env

@@ -91,16 +91,15 @@ modules:
   - name: EvoEdge_Dashboard-destinations
     type: com.sap.application.content
     requires:
-      - name: EvoEdge_Dashboard-auth
+      - name: xsuaa-service
         parameters:
           service-key:
-            name: EvoEdge_Dashboard-auth-key
+            name: xsuaa-service-key
       - name: EvoEdge_Dashboard-html5-repo-host
         parameters:
           service-key:
             name: EvoEdge_Dashboard-html5-repo-host-key
-      - name: srv-api
-      - name: EvoEdge_Dashboard-destination
+      - name: EvoEdge_Dashboard-destination-service
         parameters:
           content-target: true
     build-parameters:
@@ -114,10 +113,11 @@ modules:
               ServiceInstanceName: EvoEdge_Dashboard-html5-repo-host
               ServiceKeyName: EvoEdge_Dashboard-html5-repo-host-key
               sap.cloud.service: EvoEdge_Dashboard.service
-            - Name: EvoEdge_Dashboard-auth
+
+            - Name: xsuaa-service
               Authentication: OAuth2UserTokenExchange
-              ServiceInstanceName: EvoEdge_Dashboard-auth
-              ServiceKeyName: EvoEdge_Dashboard-auth-key
+              ServiceInstanceName: xsuaa-service
+              ServiceKeyName: xsuaa-service-key
               sap.cloud.service: EvoEdge_Dashboard.service
 
 resources:
@@ -143,13 +143,6 @@ resources:
       service-name: postgresdb
       service-plan: standard
 
-  - name: EvoEdge_Dashboard-repo-host
-    type: org.cloudfoundry.managed-service
-    parameters:
-      service: html5-apps-repo
-      service-name: EvoEdge_Dashboard-html5-service
-      service-plan: app-host
-
   - name: EvoEdge_Dashboard-html5-repo-host
     type: org.cloudfoundry.managed-service
     parameters:
@@ -173,11 +166,18 @@ resources:
         init_data:
           instance:
             destinations:
-              - Authentication: NoAuthentication
-                Name: ui5
+              - Name: ui5
+                Authentication: NoAuthentication
                 ProxyType: Internet
                 Type: HTTP
                 URL: https://ui5.sap.com
+              - Name: srv-api
+                URL: https://evoedge-solutions-limited-dev-evoedge-dashboard-srv.cfapps.ap21.hana.ondemand.com
+                Type: HTTP
+                ProxyType: Internet
+                Authentication: NoAuthentication
+                HTML5.DynamicDestination: true
+                HTML5.ForwardAuthToken: true
             existing_destinations_policy: update
           subaccount:
             existing_destinations_policy: update
@@ -189,20 +189,6 @@ resources:
                 URL: https://${org}.launchpad.${default-domain}
                 CEP.HTML5contentprovider: true
         version: 1.0.0
-    requires:
-      - name: srv-api
-        group: destinations
-        properties:
-          name: srv-api
-          url: ~{srv-url}
-          forwardAuthToken: true
-
-  - name: EvoEdge_Dashboard-auth
-    type: org.cloudfoundry.managed-service
-    parameters:
-      service: xsuaa
-      service-plan: application
-      existing-service-name: EvoEdge_Dashboard-auth
 
   - name: EvoEdge_Dashboard-destination
     type: org.cloudfoundry.managed-service

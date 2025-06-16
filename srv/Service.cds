@@ -1,28 +1,29 @@
-using { EvoEdge_Dashboard.db.Scheme as machineData } from '../db/Scheme';
+using {EvoEdge_Dashboard.db.Scheme as machineData} from '../db/Scheme';
 
+@path: 'my'
 service MyService {
-    entity WaxingMachineSet as projection on machineData.WaxingMachine;
 
-  entity WaxingMachineAnalytics as select from machineData.WaxingMachine {
-    key id,
-    machine_id,
-    machine_name,
-    created_date,
-    created_time,
-    @Aggregation.default: #SUM
-    pressure
-  };
+  entity WaxingMachineSet       as projection on machineData.WaxingMachine;
 
-  entity MachineTypeSet as projection on machineData.MachineType;
-  
-  // @readonly
-  // entity UniqueMachineTypes as select from MachineTypeSet {
-  //   key Machine_Type  // must be 'key' to be OData-valid
-  // } group by Machine_Type;
+  entity WaxingMachineAnalytics as
+    select from machineData.WaxingMachine {
+      key id,
+          machine_id,
+          machine_name,
+          created_date,
+          created_time,
+          @Aggregation.default: #SUM
+          pressure
+    };
 
-  // function()
-  // define only the shape of the result
-  entity UniqueMachineTypes {
-    key Machine_Type: String;
-  }
+  entity MachineTypeSet         as projection on machineData.MachineType;
+
+  entity UniqueMachineTypes     as
+    select from machineData.MachineType {
+      key Machine_Type
+    }
+    group by
+      Machine_Type;
+
+
 }
